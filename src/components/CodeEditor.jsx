@@ -1,4 +1,4 @@
-import { Box, HStack } from "@chakra-ui/react";
+import { Box, Button, HStack } from "@chakra-ui/react";
 import { TabList, Tab, Tabs, TabPanel, TabPanels } from "@chakra-ui/react";
 import { Editor } from "@monaco-editor/react";
 import { useState, useRef } from "react";
@@ -6,18 +6,16 @@ import { useState, useRef } from "react";
 import LanguageSelector from "./LanguageSelector";
 import Output from "./Output";
 
-import { STARTER_CODE_SNIPPETS } from "../constants";
+import { LANGUAGE_EXTENSION, STARTER_CODE_SNIPPETS } from "../constants";
 
 const CodeEditor = () => {
 
     const editorRef = useRef();
     const inpEditorRef = useRef();
 
-    const [value, setValue] = useState("")
-    const [inpValue, setInpValue] = useState("")
     const [language, setLanguage] = useState("python")
-
-    
+    const [inpValue, setInpValue] = useState("")
+    const [value, setValue] = useState(STARTER_CODE_SNIPPETS[language])
 
     const onMount = (editor) => {
         editorRef.current = editor;
@@ -36,6 +34,16 @@ const CodeEditor = () => {
         )
     }
 
+    const saveFile = async (blob, name, extension) => {
+        const a = document.createElement('a');
+        a.download = name + extension;
+        a.href = URL.createObjectURL(blob);
+        a.addEventListener('click', (e) => {
+          setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
+        });
+        a.click();
+      };
+
     return (
         <Box>
             <HStack spacing={4}>
@@ -48,7 +56,19 @@ const CodeEditor = () => {
 
                         <TabPanels>
                             <TabPanel>
-                                <LanguageSelector language={language} onSelect={onSelect} />
+                                <HStack spacing={4}>
+                                    <Box ml={2} mb={4} w="50%">
+                                        <LanguageSelector language={language} onSelect={onSelect} />
+                                    </Box>
+                                    <Box w="50%">
+                                        <Button onClick={() => {
+                                            const data = new Blob([value], {type: "application/plaintext"})
+                                            saveFile(data, "code", LANGUAGE_EXTENSION[language])
+                                        }}>
+                                            Download
+                                        </Button>
+                                    </Box>
+                                </HStack>
                                 <Editor
                                     height='75vh'
                                     theme="vs-dark"

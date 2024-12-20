@@ -12,6 +12,13 @@ export const STARTER_CODE_SNIPPETS = {
     csharp: `using System;\n\nnamespace HelloWorld\n{\n\tclass Hello { \n\t\tstatic void Main(string[] args) {\n\t\t\tConsole.WriteLine("Hello World in C#");\n\t\t}\n\t}\n}\n`,
 }
 
+export const LANGUAGE_EXTENSION = {
+    python: ".py",
+    cpp: ".cpp",
+    java: ".java",
+    csharp: ".cs"
+}
+
 export const LANGUAGE_CODE_NUMBER = (language) => {
     switch (language) {
         case "python":
