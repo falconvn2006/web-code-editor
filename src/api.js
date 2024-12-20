@@ -1,7 +1,7 @@
 import axios from "axios"
 import { LANGUAGE_CODE_NUMBER } from "./constants";
 
-export const executeCode = async (language, sourceCode) => {
+export const executeCode = async (language, sourceCode, input) => {
     const options = {
         method: 'POST',
         url: 'https://judge0-ce.p.rapidapi.com/submissions',
@@ -18,7 +18,7 @@ export const executeCode = async (language, sourceCode) => {
         data: {
           language_id: LANGUAGE_CODE_NUMBER(language),
           "source_code": sourceCode,
-          "stdin": ""
+          "stdin": input ? input : ""
         }
     };
 
