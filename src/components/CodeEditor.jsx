@@ -1,4 +1,4 @@
-import { Box, Button, HStack, useToast } from "@chakra-ui/react";
+import { Box, Button, HStack, useToast, Input } from "@chakra-ui/react";
 import { TabList, Tab, Tabs, TabPanel, TabPanels } from "@chakra-ui/react";
 import { Editor } from "@monaco-editor/react";
 import { useState, useRef } from "react";
@@ -7,6 +7,7 @@ import LanguageSelector from "./LanguageSelector";
 import Output from "./Output";
 
 import { LANGUAGE_EXTENSION, STARTER_CODE_SNIPPETS } from "../constants";
+import { DownloadIcon } from "@chakra-ui/icons";
 
 const CodeEditor = () => {
 
@@ -17,6 +18,7 @@ const CodeEditor = () => {
 
     const [language, setLanguage] = useState("python")
     const [inpValue, setInpValue] = useState("")
+    const [isFile, setIsFile] = useState(false)
     const [value, setValue] = useState(STARTER_CODE_SNIPPETS[language])
 
     const onMount = (editor) => {
@@ -31,9 +33,8 @@ const CodeEditor = () => {
 
     const onSelect = (language) => {
         setLanguage(language)
-        setValue(
-            STARTER_CODE_SNIPPETS[language]
-        )
+        if(!isFile)
+            setValue(STARTER_CODE_SNIPPETS[language])
     }
 
     const saveFile = async (blob, name, extension) => {
@@ -51,12 +52,52 @@ const CodeEditor = () => {
             isClosable: true,
             duration: 2000
         })
-      };
+    };
+
+    const handleCodeUpload = async (event) => {
+        event.preventDefault();
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            const text = (event.target.result);
+            const name = (event.target);
+            setValue(text);
+            setIsFile(true);
+            toast({
+                title: "File has successfully imported.",
+                description: "Please change the language to your file's programming languange (if necessary)",
+                status: "success",
+                isClosable: true,
+                duration: 4000
+            })  
+        };
+
+        reader.readAsText(event.target.files[0])
+    }
+
+    const handleInputUpload = async (event) => {
+        event.preventDefault();
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            const text = (event.target.result);
+            const name = (event.target);
+            setInpValue(text);
+            toast({
+                title: "File has successfully imported.",
+                status: "success",
+                isClosable: true,
+                duration: 4000
+            })  
+        };
+
+        reader.readAsText(event.target.files[0])
+    }
 
     return (
         <Box>
             <HStack spacing={4}>
-                <Box w="50%">
+                <Box w="60%">
                     <Tabs>
                         <TabList>
                             <Tab>Code Editor</Tab>
@@ -66,7 +107,7 @@ const CodeEditor = () => {
                         <TabPanels>
                             <TabPanel>
                                 <HStack spacing={4}>
-                                    <Box w="150%" ml={2} mb={4}>
+                                    <Box w="100%" ml={2} mb={4}>
                                         <LanguageSelector language={language} onSelect={onSelect} />
                                     </Box>
                                     <Box w="50%" ml={2} mb={4}>
@@ -74,8 +115,11 @@ const CodeEditor = () => {
                                             const data = new Blob([value], {type: "application/plaintext"})
                                             saveFile(data, "code", LANGUAGE_EXTENSION[language])
                                         }}>
-                                            Download
+                                            <DownloadIcon />&nbsp;Download
                                         </Button>
+                                        <Box mt={4}>
+                                            <Input type="file" onChange={handleCodeUpload} />
+                                        </Box>
                                     </Box>
                                 </HStack>
                                 <Editor
@@ -92,16 +136,17 @@ const CodeEditor = () => {
                             </TabPanel>
 
                             <TabPanel>
-                                <Box ml={2} mb={4}>
+                                <Box w={500} ml={2} mb={3}>
                                     <Button onClick={() => {
                                         const data = new Blob([inpValue], {type: "application/plaintext"})
                                         saveFile(data, "input", ".txt")
                                     }}>
-                                        Download
+                                        <DownloadIcon />&nbsp;Download
                                     </Button>
+                                    <Input mt={3} type="file" onChange={handleInputUpload} />
                                 </Box>
                                 <Editor
-                                    height='75vh'
+                                    height='70vh'
                                     theme="vs-dark"
                                     language="plaintext"
                                     defaultValue=""
