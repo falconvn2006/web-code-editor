@@ -30,6 +30,7 @@ const Output = ({editorRef, language, inputEditorRef}) => {
                     title: "Time Limit Exceeded.",
                     description: "Your code ran longer than our time limit",
                     status: "error",
+                    isClosable: true,
                     duration: 6000
                 })
             }
@@ -40,6 +41,7 @@ const Output = ({editorRef, language, inputEditorRef}) => {
                     title: "Finished running code",
                     description: "Your code has been successfully executed",
                     status: "success",
+                    isClosable: true,
                     duration: 2000
                 })
             }
@@ -50,6 +52,7 @@ const Output = ({editorRef, language, inputEditorRef}) => {
                 title: "An error occured.",
                 description: error.message || "Unable to run code.",
                 status: "error",
+                isClosable: true,
                 duration: 6000
             })
         }

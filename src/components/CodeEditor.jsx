@@ -1,4 +1,4 @@
-import { Box, Button, HStack } from "@chakra-ui/react";
+import { Box, Button, HStack, useToast } from "@chakra-ui/react";
 import { TabList, Tab, Tabs, TabPanel, TabPanels } from "@chakra-ui/react";
 import { Editor } from "@monaco-editor/react";
 import { useState, useRef } from "react";
@@ -9,6 +9,8 @@ import Output from "./Output";
 import { LANGUAGE_EXTENSION, STARTER_CODE_SNIPPETS } from "../constants";
 
 const CodeEditor = () => {
+
+    const toast = useToast()
 
     const editorRef = useRef();
     const inpEditorRef = useRef();
@@ -42,6 +44,13 @@ const CodeEditor = () => {
           setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
         });
         a.click();
+
+        toast({
+            title: name + extension + " has successfully downloaded!",
+            status: "success",
+            isClosable: true,
+            duration: 2000
+        })
       };
 
     return (
@@ -57,10 +66,10 @@ const CodeEditor = () => {
                         <TabPanels>
                             <TabPanel>
                                 <HStack spacing={4}>
-                                    <Box ml={2} mb={4} w="50%">
+                                    <Box w="150%" ml={2} mb={4}>
                                         <LanguageSelector language={language} onSelect={onSelect} />
                                     </Box>
-                                    <Box w="50%">
+                                    <Box w="50%" ml={2} mb={4}>
                                         <Button onClick={() => {
                                             const data = new Blob([value], {type: "application/plaintext"})
                                             saveFile(data, "code", LANGUAGE_EXTENSION[language])
@@ -70,7 +79,7 @@ const CodeEditor = () => {
                                     </Box>
                                 </HStack>
                                 <Editor
-                                    height='75vh'
+                                    height='70vh'
                                     theme="vs-dark"
                                     language={language}
                                     defaultValue={STARTER_CODE_SNIPPETS[language]}
@@ -83,6 +92,14 @@ const CodeEditor = () => {
                             </TabPanel>
 
                             <TabPanel>
+                                <Box ml={2} mb={4}>
+                                    <Button onClick={() => {
+                                        const data = new Blob([inpValue], {type: "application/plaintext"})
+                                        saveFile(data, "input", ".txt")
+                                    }}>
+                                        Download
+                                    </Button>
+                                </Box>
                                 <Editor
                                     height='75vh'
                                     theme="vs-dark"
