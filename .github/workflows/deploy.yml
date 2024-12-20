@@ -25,6 +25,8 @@ jobs:
 
       - name: Build project
         run: npm run build
+      
+      - name: echo "${{secrets.VITE_JUDGE_ZERO_KEY}}"
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v3
